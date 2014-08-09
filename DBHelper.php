@@ -1,6 +1,6 @@
 <?php
 /***
- * Core hooks to use for user management
+ * Core hooks to use for database management
  * Uses MySQLi as the main interface
  ***/
 
@@ -140,7 +140,7 @@ class DBHelper {
     return $r && $r2;
   }
 
-  private static function cleanInput($input)
+  public static function cleanInput($input)
   {
 
     $search = array(
@@ -154,7 +154,7 @@ class DBHelper {
     return $output;
   }
 
-  protected function sanitize($input)
+  public function sanitize($input)
   {
     # Emails get mutilated here -- let's check that first
     $preg="/[a-z0-9!#$%&'*+=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+(?:[a-z]{2}|com|org|net|edu|gov|mil|biz|info|mobi|name|aero|asia|jobs|museum)\b/";

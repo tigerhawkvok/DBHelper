@@ -1,6 +1,6 @@
 <?php
 
-require_once(dirname(__FILE__).'/xml.php');
+require_once(dirname(__FILE__).'/xml/xml.php');
 
 if(!function_exists('curPageURL'))
   {
@@ -14,8 +14,7 @@ if(!function_exists('curPageURL'))
       } else {
         $pageURL .= $_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"];
       }
-      require_once(dirname(__FILE__).'/db_hook.inc');
-      return cleanInput($pageURL);
+      return DBHelper::cleanInput($pageURL);
     }
   }
 
@@ -256,9 +255,9 @@ if(!function_exists('smart_decode64'))
     }
   }
 
-if(!function_exists('deescape'))
+if(!function_exists('deEscape'))
   {
-    function deescape($input) {
+    function deEscape($input) {
       return htmlspecialchars_decode(html_entity_decode(urldecode($input)));
     }
   }
