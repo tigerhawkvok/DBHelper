@@ -180,7 +180,7 @@ class DBHelper {
           }
         $input  = htmlentities(self::cleanInput($input));
         $input=str_replace("_","&#95;",$input); // Fix _ potential wildcard
-        $input=str_replace("_","&#37;",$input); // Fix % potential wildcard
+        $input=str_replace("%","&#37;",$input); // Fix % potential wildcard
         $input=str_replace("'","&#39;",$input);
         $input=str_replace('"',"&#34;",$input);
         $l=$this->openDB();
