@@ -1,7 +1,5 @@
 <?php
 
-require_once(dirname(__FILE__).'/xml/xml.php');
-
 if(!function_exists('curPageURL'))
   {
 
