@@ -438,93 +438,12 @@ class DBHelper {
     else return false;
   }
 
-  function updateEntry($value,$unq_id,$field_name = null,$precleaned=false)
-  {
-    /***
-     *
-     * @param string|array $value new value to fill $field_name, or column=>value pairs
-     * @param array $unq_id a 1-element array of col=>val to designate the matching criteria
-     * @param string|array $field_name column(s) to be updated
-     * @param bool $precleaned if the input elements have been presanitized
-     ***/
-    if(!is_array($unq_id))
-      {
-        throw(new Exception("Invalid argument for unq_id"));
-      }
-    $column=key($unq_id);
-    $uval=current($unq_id);
-
-    if(!$this->is_entry($uval,$column,$precleaned))
-      {
-        throw(new Exception("No item '$uval' exists for column '$column'"));
-      }
-    $l = $this->openDB();
-    if(!empty($field_name))
-      {
-        $values = array();
-        if(is_array($field_name))
-          {
-            foreach($field_name as $key)
-              {
-                # Map each field name onto the value of the current value item
-                $item = current($value);
-                $key = $precleaned ? mysqli_real_escape_string($l,$key) : $this->sanitize($key);
-                $values[$key] = $precleaned ? mysqli_real_escape_string($l,$item) : $this->sanitize($item);
-                next($value);
-              }
-          }
-        else
-          {
-            # $field_name isn't an array. Let's make sure $value isn't either
-            if(!is_array($value))
-              {
-                $key = $precleaned ? mysqli_real_escape_string($l,$field_name) : $this->sanitize($field_name);
-                $values[$key] = $precleaned ? mysqli_real_escape_string($l,$value) : $this->sanitize($value);
-              }
-            else
-              {
-                # Mismatched types
-                throw(new Exception("Mismatched types for \$value and \$field_name"));
-              }
-          }
-      }
-    else if(empty($field_name))
-      {
-        # Make sure that $value is an array
-        if(is_array($value) && is_string(key($value)))
-          {
-            $values = $value;
-          }
-        else
-          {
-            throw(new Exception("No column found for \$value"));
-          }
-      }
-
-    $sets = array();
-    foreach($values as $col=>$val)
-      {
-        $sets[] = "`$col`=\"$val\"";
-      }
-    $set_string = implode(",",$sets);
-    $query = "UPDATE `".$this->getTable()."` SET $set_string WHERE `$column`='$uval'";
-    mysqli_query($l,"BEGIN");
-    $r = mysqli_query($l,$query);
-    if($r !== false)
-      {
-        mysqli_query($l,"COMMIT");
-        return true;
-      }
-    else
-      {
-        mysqli_query($l,"ROLLBACK");
-        return mysqli_error($l);
-      }
-  }
-
 
 public function doQuery($search,$cols = "*",$boolean_type = "AND", $loose = false, $precleaned = false, $order_by = false)
 {
+  /***
+   *
+   ***/
   if(!is_array($search))
     {
       return false;
@@ -606,6 +525,89 @@ public function doSoundex($search,$cols = "*",$precleaned = false,$order_by = fa
   return $r === false ? mysqli_error($l) : $r;
 }
 
+  public function updateEntry($value,$unq_id,$field_name = null,$precleaned=false)
+  {
+    /***
+     *
+     * @param string|array $value new value to fill $field_name, or column=>value pairs
+     * @param array $unq_id a 1-element array of col=>val to designate the matching criteria
+     * @param string|array $field_name column(s) to be updated
+     * @param bool $precleaned if the input elements have been presanitized
+     ***/
+    if(!is_array($unq_id))
+      {
+        throw(new Exception("Invalid argument for unq_id"));
+      }
+    $column=key($unq_id);
+    $uval=current($unq_id);
+    
+    if(!$this->is_entry($uval,$column,$precleaned))
+      {
+        throw(new Exception("No item '$uval' exists for column '$column'"));
+      }
+    $l = $this->openDB();
+    if(!empty($field_name))
+      {
+        $values = array();
+        if(is_array($field_name))
+          {
+            foreach($field_name as $key)
+              {
+                # Map each field name onto the value of the current value item
+                $item = current($value);
+                $key = $precleaned ? mysqli_real_escape_string($l,$key) : $this->sanitize($key);
+                $values[$key] = $precleaned ? mysqli_real_escape_string($l,$item) : $this->sanitize($item);
+                next($value);
+              }
+          }
+        else
+          {
+            # $field_name isn't an array. Let's make sure $value isn't either
+            if(!is_array($value))
+              {
+                $key = $precleaned ? mysqli_real_escape_string($l,$field_name) : $this->sanitize($field_name);
+                $values[$key] = $precleaned ? mysqli_real_escape_string($l,$value) : $this->sanitize($value);
+              }
+            else
+              {
+                # Mismatched types
+                throw(new Exception("Mismatched types for \$value and \$field_name"));
+              }
+          }
+      }
+    else if(empty($field_name))
+      {
+        # Make sure that $value is an array
+        if(is_array($value) && is_string(key($value)))
+          {
+            $values = $value;
+          }
+        else
+          {
+            throw(new Exception("No column found for \$value"));
+          }
+      }
+
+    $sets = array();
+    foreach($values as $col=>$val)
+      {
+        $sets[] = "`$col`=\"$val\"";
+      }
+    $set_string = implode(",",$sets);
+    $query = "UPDATE `".$this->getTable()."` SET $set_string WHERE `$column`='$uval'";
+    mysqli_query($l,"BEGIN");
+    $r = mysqli_query($l,$query);
+    if($r !== false)
+      {
+        mysqli_query($l,"COMMIT");
+        return true;
+      }
+    else
+      {
+        mysqli_query($l,"ROLLBACK");
+        return mysqli_error($l);
+      }
+  }
 
 
 }
