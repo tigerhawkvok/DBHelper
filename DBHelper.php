@@ -113,7 +113,7 @@ class DBHelper {
     if(!empty($table)) $this->setTable($table);
     if(mysqli_query($l,"SELECT * FROM `".$this->getTable()."` LIMIT 1")===false)
       {
-        return createTable();
+        return $this->createTable();
       }
     return true;
   }
