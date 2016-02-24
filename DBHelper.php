@@ -178,7 +178,9 @@ class DBHelper
             $search[] = '@<[\/\!]*?[^<>]*?>@si'; // Strip out HTML tags
         }
         $output = preg_replace($search, '', $input);
-
+        # Replace HTML brackets for anything that slipped through
+        $output = str_replace("<", "&#60;", $output);
+        $output = str_replace(">", "&#62;", $output);
         return $output;
     }
 
